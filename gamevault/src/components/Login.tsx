@@ -1,4 +1,3 @@
-// src/components/Login.tsx
 import React, { useState, FormEvent, JSX } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";

@@ -1,7 +1,5 @@
-// src/layouts/ChannelSidebar.tsx
-
 export default function ChannelSidebar() {
-  // Mock data for channels
+  /*----- Mock data for channels -----*/
   const categories = [
     {
       id: "general",
@@ -42,14 +40,21 @@ export default function ChannelSidebar() {
       <div className="flex-1 overflow-y-auto px-2 py-3 space-y-4">
         {categories.map((category) => (
           <div key={category.id}>
-            <h3 className="text-xs font-semibold text-gray-400 px-2 mb-1">{category.name}</h3>
+            <h3 className="text-xs font-semibold text-gray-400 px-2 mb-1">
+              {category.name}
+            </h3>
             <div className="space-y-1">
               {category.channels.map((channel) => (
-                <div key={channel.id} className="flex items-center px-2 py-1 rounded hover:bg-gray-700 cursor-pointer group">
+                <div
+                  key={channel.id}
+                  className="flex items-center px-2 py-1 rounded hover:bg-gray-700 cursor-pointer group"
+                >
                   <span className="text-gray-400 mr-1">
                     {channel.type === "text" ? "#" : "🔊"}
                   </span>
-                  <span className="text-gray-400 group-hover:text-white">{channel.name}</span>
+                  <span className="text-gray-400 group-hover:text-white">
+                    {channel.name}
+                  </span>
                 </div>
               ))}
             </div>

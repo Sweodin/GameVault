@@ -1,4 +1,3 @@
-// src/components/Signup.tsx
 import React, { useState, FormEvent, JSX } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -6,9 +5,9 @@ import { useNavigate } from "react-router-dom";
 export default function Signup(): JSX.Element {
   const [email, setEmail] = useState("");
   const [confirmEmail, setConfirmEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const { signup } = useAuth();
@@ -17,7 +16,7 @@ export default function Signup(): JSX.Element {
   async function handleSubmit(e: FormEvent): Promise<void> {
     e.preventDefault();
 
-    if (!email || !password || !passwordConfirm || !dateOfBirth) {
+    if (!email || !confirmEmail || !username || !password || !passwordConfirm) {
       return setError("All fields are required");
     }
 
@@ -36,7 +35,7 @@ export default function Signup(): JSX.Element {
     try {
       setError("");
       setLoading(true);
-      await signup(email, password);
+      await signup(email, password, username);
       navigate("/");
     } catch (error) {
       setError("Failed to create an account: " + (error as Error).message);
@@ -96,12 +95,12 @@ export default function Signup(): JSX.Element {
 
             <div>
               <label className="block text-gray-300 text-sm font-medium mb-2">
-                Date of Birth
+                Username
               </label>
               <input
-                type="date"
-                value={dateOfBirth}
-                onChange={(e) => setDateOfBirth(e.target.value)}
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 className="w-full bg-gray-900/50 border border-gray-700 focus:border-cyan-500 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all"
                 required
               />

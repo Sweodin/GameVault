@@ -1,7 +1,5 @@
-// src/layouts/ServerSidebar.tsx
-
 export default function ServerSidebar() {
-  // Mock data for server/game categories
+  /*----- Mock data for server/game categories -----*/
   const servers = [
     { id: "home", name: "Home", icon: "🏠" },
     { id: "action", name: "Action Games", icon: "🔥" },

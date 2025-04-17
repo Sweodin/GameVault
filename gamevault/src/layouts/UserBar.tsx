@@ -1,5 +1,3 @@
-// src/layouts/UserBar.tsx
-import React from "react";
 import { useAuth } from "../contexts/AuthContext";
 
 export default function UserBar() {
@@ -20,9 +18,15 @@ export default function UserBar() {
       </div>
 
       <div className="ml-auto flex space-x-2">
-        <button className="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center hover:bg-gray-500">🎤</button>
-        <button className="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center hover:bg-gray-500">🎧</button>
-        <button className="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center hover:bg-gray-500">⚙️</button>
+        <button className="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center hover:bg-gray-500">
+          🎤
+        </button>
+        <button className="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center hover:bg-gray-500">
+          🎧
+        </button>
+        <button className="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center hover:bg-gray-500">
+          ⚙️
+        </button>
       </div>
     </div>
   );

@@ -4,18 +4,21 @@ import { useAuth } from "../contexts/AuthContext";
 import { useOutsideClick } from "../hooks/useOutsideClick";
 import ServerSidebar from "./ServerSidebar";
 import ChannelSidebar from "./ChannelSidebar";
-import StatusSelector, { getStatusColor } from "../components/status/StatusSelector";
+import StatusSelector, {
+  getStatusColor,
+} from "../components/status/StatusSelector";
 
 interface MainLayoutProps {
   children: ReactNode;
 }
 
 export default function MainLayout({ children }: MainLayoutProps) {
-  const { logout, username, currentUser, userStatus, profileImageUrl } = useAuth();
+  const { logout, username, currentUser, userStatus, profileImageUrl } =
+    useAuth();
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const [inServer, setInServer] = useState(false);
+  const [inServer, setInServer] = useState(true);
 
   /*----- Use custom hook for outside click -----*/
 
@@ -111,14 +114,22 @@ export default function MainLayout({ children }: MainLayoutProps) {
                 >
                   <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-gray-800 to-gray-900 overflow-hidden border border-gray-700 relative shadow-md">
                     {profileImageUrl ? (
-                      <img src={profileImageUrl} alt="Profile" className="w-full h-full object-cover" />
+                      <img
+                        src={profileImageUrl}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                      />
                     ) : (
                       <div className="w-full h-full bg-gradient-to-br from-cyan-500 to-purple-600 flex items-center justify-center">
-                        <span className="text-sm font-bold">{getInitials()}</span>
+                        <span className="text-sm font-bold">
+                          {getInitials()}
+                        </span>
                       </div>
                     )}
                     <div
-                      className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full ${getStatusColor(userStatus)} border border-gray-800`}
+                      className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full ${getStatusColor(
+                        userStatus
+                      )} border border-gray-800`}
                     ></div>
                   </div>
                   <span className="hidden md:inline text-base font-medium">
@@ -134,10 +145,16 @@ export default function MainLayout({ children }: MainLayoutProps) {
                       <div className="flex flex-col items-center text-center mb-2">
                         <div className="w-20 h-20 rounded-lg bg-gradient-to-br from-gray-800 to-gray-900 overflow-hidden border border-gray-700 shadow-md mb-3">
                           {profileImageUrl ? (
-                            <img src={profileImageUrl} alt="Profile" className="w-full h-full object-cover" />
+                            <img
+                              src={profileImageUrl}
+                              alt="Profile"
+                              className="w-full h-full object-cover"
+                            />
                           ) : (
                             <div className="w-full h-full bg-gradient-to-br from-cyan-500 to-purple-600 flex items-center justify-center">
-                              <span className="text-xl font-bold">{getInitials()}</span>
+                              <span className="text-xl font-bold">
+                                {getInitials()}
+                              </span>
                             </div>
                           )}
                         </div>
@@ -157,9 +174,9 @@ export default function MainLayout({ children }: MainLayoutProps) {
                       <div className="text-xs text-gray-400 mb-2">
                         SET STATUS
                       </div>
-                      <StatusSelector 
-                        variant="dropdown" 
-                        onStatusChange={() => setDropdownOpen(false)} 
+                      <StatusSelector
+                        variant="dropdown"
+                        onStatusChange={() => setDropdownOpen(false)}
                       />
                     </div>
 
@@ -210,10 +227,50 @@ export default function MainLayout({ children }: MainLayoutProps) {
         </div>
       </header>
 
-      <div className="flex h-[calc(100vh-5rem)]">
+      <div className="flex h-[calc(100vh-5rem)] relative">
+        {/* Main content with sidebars */}
         <ServerSidebar />
         {inServer && <ChannelSidebar />}
-        <main className="flex-1 overflow-y-auto">{children}</main>
+        <main className="flex-1 overflow-y-auto pb-16 md:pb-0">{children}</main>
+
+        {/* Mobile bottom navigation - visible only on small screens */}
+        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-800 flex justify-around p-3 z-10">
+          <a
+            href="/"
+            className="flex flex-col items-center text-gray-400 hover:text-cyan-400"
+          >
+            <i className="fas fa-home text-lg"></i>
+            <span className="text-xs mt-1">Home</span>
+          </a>
+          <a
+            href="/browse"
+            className="flex flex-col items-center text-gray-400 hover:text-cyan-400"
+          >
+            <i className="fas fa-compass text-lg"></i>
+            <span className="text-xs mt-1">Browse</span>
+          </a>
+          <a
+            href="/library"
+            className="flex flex-col items-center text-gray-400 hover:text-cyan-400"
+          >
+            <i className="fas fa-gamepad text-lg"></i>
+            <span className="text-xs mt-1">Library</span>
+          </a>
+          <a
+            href="/friends"
+            className="flex flex-col items-center text-gray-400 hover:text-cyan-400"
+          >
+            <i className="fas fa-users text-lg"></i>
+            <span className="text-xs mt-1">Friends</span>
+          </a>
+          <a
+            href="/profile"
+            className="flex flex-col items-center text-gray-400 hover:text-cyan-400"
+          >
+            <i className="fas fa-user text-lg"></i>
+            <span className="text-xs mt-1">Profile</span>
+          </a>
+        </div>
       </div>
     </div>
   );

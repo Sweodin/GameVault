@@ -1,6 +1,13 @@
 import { GameCardProps } from "../../types/game";
+import { useNavigate } from "react-router-dom";
 
 export function GameCard({ game }: GameCardProps) {
+  const navigate = useNavigate();
+  
+  const handleJoinServer = () => {
+    // Navigate to game page without setting localStorage
+    navigate(`/game/${game.id}`);
+  };
   return (
     <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl overflow-hidden border border-purple-900/30 shadow-xl hover:shadow-purple-900/20 hover:border-purple-800/50 transition-all duration-300">
       {/* Game Image */}
@@ -55,7 +62,10 @@ export function GameCard({ game }: GameCardProps) {
         </div>
 
         {/* Join Button */}
-        <button className="w-full mt-4 py-2 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white rounded-lg font-medium transition-all shadow-lg shadow-purple-900/30">
+        <button 
+          onClick={handleJoinServer}
+          className="w-full mt-4 py-2 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white rounded-lg font-medium transition-all shadow-lg shadow-purple-900/30"
+        >
           Join Server
         </button>
       </div>

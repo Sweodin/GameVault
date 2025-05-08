@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+// Removed unused imports
+
 export default function ServerSidebar() {
   /*----- Mock data for server/game categories -----*/
 
@@ -43,7 +45,7 @@ export default function ServerSidebar() {
 
   // State for active tab and sidebar collapse
   const [activeTab, setActiveTab] = useState("home");
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
 
   // Check if we're on mobile
@@ -56,6 +58,11 @@ export default function ServerSidebar() {
     window.addEventListener("resize", checkMobile);
 
     return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+  
+  // Set sidebar collapsed by default when user logs in
+  useEffect(() => {
+    setIsCollapsed(true);
   }, []);
 
   return (
@@ -184,4 +191,4 @@ export default function ServerSidebar() {
     </div>
   );
 }
- */
+ */ 

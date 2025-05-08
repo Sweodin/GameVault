@@ -8,6 +8,7 @@ import Profile from "./components/Profile";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 import Chat from "./pages/Chat";
+import GamePage from "./pages/GamePage";
 
 function App(): JSX.Element {
   return (
@@ -37,6 +38,14 @@ function App(): JSX.Element {
               element={
                 <PrivateRoute>
                   <Chat />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/game/:gameId"
+              element={
+                <PrivateRoute>
+                  <GamePage />
                 </PrivateRoute>
               }
             />

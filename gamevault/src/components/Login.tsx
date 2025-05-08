@@ -29,7 +29,7 @@ export default function Login(): JSX.Element {
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">
-            GameVault
+            Nexus
           </h1>
           <p className="mt-2 text-gray-400">Your gaming community awaits</p>
         </div>

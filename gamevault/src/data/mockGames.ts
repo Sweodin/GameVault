@@ -4,7 +4,7 @@ export const mockGames: Game[] = [
   {
     id: "1",
     name: "Elden Ring",
-    image: "https://placehold.co/300x150",
+    image: "/assets/games/elden-ring.jpg",
     genre: "RPG",
     activeServers: 245,
     onlinePlayers: 12500,
@@ -14,7 +14,7 @@ export const mockGames: Game[] = [
   {
     id: "2",
     name: "Counter-Strike 2",
-    image: "https://placehold.co/300x150",
+    image: "/assets/games/counter-strike-2.jpg",
     genre: "FPS",
     activeServers: 1024,
     onlinePlayers: 450000,
@@ -24,7 +24,7 @@ export const mockGames: Game[] = [
   {
     id: "3",
     name: "League of Legends",
-    image: "https://placehold.co/300x150",
+    image: "/assets/games/league-of-legends.jpg",
     genre: "MOBA",
     activeServers: 780,
     onlinePlayers: 320000,
@@ -34,7 +34,7 @@ export const mockGames: Game[] = [
   {
     id: "4",
     name: "World of Warcraft",
-    image: "https://placehold.co/300x150",
+    image: "/assets/games/world-of-warcraft.jpg",
     genre: "MMO",
     activeServers: 350,
     onlinePlayers: 85000,
@@ -44,7 +44,7 @@ export const mockGames: Game[] = [
   {
     id: "5",
     name: "Valorant",
-    image: "https://placehold.co/300x150",
+    image: "/assets/games/valorant.jpg",
     genre: "FPS",
     activeServers: 620,
     onlinePlayers: 210000,
@@ -54,7 +54,7 @@ export const mockGames: Game[] = [
   {
     id: "6",
     name: "Minecraft",
-    image: "https://placehold.co/300x150",
+    image: "/assets/games/minecraft.jpg",
     genre: "Sandbox",
     activeServers: 1200,
     onlinePlayers: 500000,
@@ -64,7 +64,7 @@ export const mockGames: Game[] = [
   {
     id: "7",
     name: "Fortnite",
-    image: "https://placehold.co/300x150",
+    image: "/assets/games/fortnite.jpg",
     genre: "Battle Royale",
     activeServers: 890,
     onlinePlayers: 380000,
@@ -74,7 +74,7 @@ export const mockGames: Game[] = [
   {
     id: "8",
     name: "Apex Legends",
-    image: "https://placehold.co/300x150",
+    image: "/assets/games/apex-legends.jpg",
     genre: "Battle Royale",
     activeServers: 450,
     onlinePlayers: 195000,
@@ -84,7 +84,7 @@ export const mockGames: Game[] = [
   {
     id: "9",
     name: "Dota 2",
-    image: "https://placehold.co/300x150",
+    image: "/assets/games/dota-2.jpg",
     genre: "MOBA",
     activeServers: 320,
     onlinePlayers: 175000,
@@ -94,7 +94,7 @@ export const mockGames: Game[] = [
   {
     id: "10",
     name: "Starfield",
-    image: "https://placehold.co/300x150",
+    image: "/assets/games/starfield.jpg",
     genre: "RPG",
     activeServers: 180,
     onlinePlayers: 65000,

@@ -1,6 +1,7 @@
-import React, { ReactNode, useState, useRef, useEffect } from "react";
+import React, { ReactNode, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { useChat } from "../contexts/ChatContext";
 import { useOutsideClick } from "../hooks/useOutsideClick";
 import ServerSidebar from "./ServerSidebar";
 import ChannelSidebar from "./ChannelSidebar";
@@ -15,10 +16,11 @@ interface MainLayoutProps {
 export default function MainLayout({ children }: MainLayoutProps) {
   const { logout, username, currentUser, userStatus, profileImageUrl } =
     useAuth();
+  const { onlineUsers } = useChat();
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const [inServer, setInServer] = useState(true);
+  const [inServer] = useState(true);
 
   /*----- Use custom hook for outside click -----*/
 
@@ -60,7 +62,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-10">
               <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">
-                Game Vault
+                Nexus
               </h1>
 
               <nav className="hidden md:flex space-x-6">
@@ -127,9 +129,11 @@ export default function MainLayout({ children }: MainLayoutProps) {
                       </div>
                     )}
                     <div
-                      className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full ${getStatusColor(
-                        userStatus
-                      )} border border-gray-800`}
+                      className={`absolute bottom-0 right-0 w-3 h-3 rounded-full ${
+                        currentUser && onlineUsers[currentUser.uid]
+                          ? "bg-green-500"
+                          : getStatusColor(userStatus)
+                      } border border-gray-800`}
                     ></div>
                   </div>
                   <span className="hidden md:inline text-base font-medium">
@@ -143,7 +147,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
                     {/* User Info */}
                     <div className="px-6 py-4 border-b border-gray-700">
                       <div className="flex flex-col items-center text-center mb-2">
-                        <div className="w-20 h-20 rounded-lg bg-gradient-to-br from-gray-800 to-gray-900 overflow-hidden border border-gray-700 shadow-md mb-3">
+                        <div className="w-20 h-20 rounded-lg bg-gradient-to-br from-gray-800 to-gray-900 overflow-hidden border border-gray-700 shadow-md mb-3 relative">
                           {profileImageUrl ? (
                             <img
                               src={profileImageUrl}
@@ -157,10 +161,31 @@ export default function MainLayout({ children }: MainLayoutProps) {
                               </span>
                             </div>
                           )}
+                          <div
+                            className={`absolute bottom-0 right-0 translate-x-1/4 translate-y-1/4 w-4 h-4 rounded-full ${
+                              currentUser && onlineUsers[currentUser.uid]
+                                ? "bg-green-500"
+                                : getStatusColor(userStatus)
+                            } border-2 border-gray-800`}
+                          ></div>
                         </div>
                         <div>
                           <div className="text-xl font-medium">
                             {username || "Guest"}
+                          </div>
+                          <div className="flex items-center justify-center text-sm text-gray-400 mt-1">
+                            <span
+                              className={`w-2 h-2 rounded-full ${
+                                currentUser && onlineUsers[currentUser.uid]
+                                  ? "bg-green-500"
+                                  : getStatusColor(userStatus)
+                              } mr-2`}
+                            ></span>
+                            <span>
+                              {currentUser && onlineUsers[currentUser.uid]
+                                ? "Online"
+                                : userStatus}
+                            </span>
                           </div>
                           <div className="text-sm text-gray-400 mt-1">
                             {currentUser?.email}

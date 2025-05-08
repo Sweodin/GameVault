@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   ChevronDown,
   ChevronRight,
@@ -8,6 +9,7 @@ import {
   Gamepad2,
   Trophy,
   Users,
+  MessageSquare,
 } from "lucide-react";
 
 export default function ChannelSidebar() {
@@ -74,6 +76,13 @@ export default function ChannelSidebar() {
           type: "voice",
           icon: <Volume2 className="w-4 h-4" />,
         },
+        {
+          id: "chat",
+          name: "Chat Messages",
+          type: "chat",
+          icon: <MessageSquare className="w-4 h-4" />,
+          path: "/chat",
+        },
       ],
     },
     {
@@ -108,7 +117,7 @@ export default function ChannelSidebar() {
       {/* Category header */}
       <div className="h-14 border-b border-gray-900 flex items-center px-4 shadow-sm">
         <h2 className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">
-          Game Vault
+          Nexus
         </h2>
       </div>
 
@@ -135,17 +144,30 @@ export default function ChannelSidebar() {
             {/* Section items */}
             {!collapsedSections[section.id] && (
               <div className="mt-1 space-y-1 pl-2">
-                {section.items.map((item) => (
-                  <div
-                    key={item.id}
-                    className="flex items-center px-2 py-2 rounded-md hover:bg-gray-700 cursor-pointer group transition-colors"
-                  >
-                    <div className="text-gray-400 mr-2">{item.icon}</div>
-                    <span className="text-gray-400 group-hover:text-white text-sm">
-                      {item.name}
-                    </span>
-                  </div>
-                ))}
+                {section.items.map((item) =>
+                  item.path ? (
+                    <Link
+                      key={item.id}
+                      to={item.path}
+                      className="flex items-center px-2 py-2 rounded-md hover:bg-gray-700 cursor-pointer group transition-colors"
+                    >
+                      <div className="text-gray-400 mr-2">{item.icon}</div>
+                      <span className="text-gray-400 group-hover:text-white text-sm">
+                        {item.name}
+                      </span>
+                    </Link>
+                  ) : (
+                    <div
+                      key={item.id}
+                      className="flex items-center px-2 py-2 rounded-md hover:bg-gray-700 cursor-pointer group transition-colors"
+                    >
+                      <div className="text-gray-400 mr-2">{item.icon}</div>
+                      <span className="text-gray-400 group-hover:text-white text-sm">
+                        {item.name}
+                      </span>
+                    </div>
+                  )
+                )}
 
                 {/* Add item button */}
                 <div className="flex items-center px-2 py-2 text-xs text-gray-500 hover:text-gray-300 cursor-pointer">

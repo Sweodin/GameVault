@@ -7,6 +7,7 @@ import { updateProfile } from "firebase/auth";
 import StatusSelector, { getStatusColor } from "./status/StatusSelector";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../firebase";
+import { useLocation } from "react-router-dom";
 
 export default function Profile() {
   const { currentUser, username, userStatus } = useAuth();
@@ -19,7 +20,33 @@ export default function Profile() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: "", type: "" });
 
-  /*----- Fetch user profile data from Firestore when component mounts -----*/
+  // New state variables for enhanced settings
+  const [favoriteGenres, setFavoriteGenres] = useState<string[]>([]);
+  const [notificationSettings, setNotificationSettings] = useState({
+    messages: true,
+    friendRequests: true,
+    gameInvites: true,
+    newsAndUpdates: false,
+  });
+  const [privacySettings, setPrivacySettings] = useState({
+    showOnlineStatus: true,
+    showCurrentGame: true,
+    allowFriendRequests: true,
+    showGameActivity: true,
+  });
+  const [activeTab, setActiveTab] = useState("profile");
+  
+  // Get tab from URL if present
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const tabParam = queryParams.get('tab');
+
+  useEffect(() => {
+    // Set active tab based on URL parameter if it exists
+    if (tabParam && ['profile', 'gaming', 'notifications', 'privacy'].includes(tabParam)) {
+      setActiveTab(tabParam);
+    }
+  }, [tabParam]);
 
   useEffect(() => {
     async function fetchUserProfile() {
@@ -35,6 +62,14 @@ export default function Profile() {
           if (userData.showEmail !== undefined)
             setShowEmail(userData.showEmail);
           if (userData.profileImageUrl) setImageUrl(userData.profileImageUrl);
+
+          // Load additional settings if they exist
+          if (userData.favoriteGenres)
+            setFavoriteGenres(userData.favoriteGenres);
+          if (userData.notificationSettings)
+            setNotificationSettings(userData.notificationSettings);
+          if (userData.privacySettings)
+            setPrivacySettings(userData.privacySettings);
         }
       } catch (error) {
         console.error("Error fetching user profile:", error);
@@ -43,23 +78,6 @@ export default function Profile() {
 
     fetchUserProfile();
   }, [currentUser]);
-
-  /*----- Profile state and handlers -----*/
-
-  // Handle image selection
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setImageFile(file);
-
-      // Create a preview
-      const reader = new FileReader();
-      reader.onload = () => {
-        setImageUrl(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   async function handleProfileUpdate(e: FormEvent) {
     e.preventDefault();
@@ -97,6 +115,10 @@ export default function Profile() {
         bio: bio,
         showEmail: showEmail,
         profileImageUrl: profileImageUrl,
+        favoriteGenres: favoriteGenres,
+        notificationSettings: notificationSettings,
+        privacySettings: privacySettings,
+        updatedAt: new Date().toISOString(),
       });
 
       /*----- Update Firebase Auth profile -----*/
@@ -122,238 +144,721 @@ export default function Profile() {
     }
   }
 
+  // Handle image selection
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setImageFile(file);
+
+      // Create a preview
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImageUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <MainLayout>
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
+        <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-xl shadow-xl border border-gray-700 overflow-hidden">
           {/* Profile Header */}
-          <div className="bg-gradient-to-r from-purple-900 to-cyan-800 px-6 py-8">
-            <div className="flex flex-col md:flex-row items-center">
-              <div className="relative mb-4 md:mb-0 md:mr-6">
-                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-gray-800 to-gray-900 overflow-hidden border border-purple-900/30">
-                  {imageUrl ? (
-                    <img
-                      src={imageUrl}
-                      alt="Profile"
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-cyan-500 to-purple-600 flex items-center justify-center text-3xl font-bold text-white">
-                      {username?.substring(0, 2).toUpperCase() || "GV"}
-                    </div>
-                  )}
-                </div>
-                <div
-                  className={`absolute bottom-0 right-0 w-5 h-5 rounded-full border-2 border-gray-800 ${getStatusColor(
-                    userStatus
-                  )}`}
-                ></div>
-              </div>
-
-              <div className="text-center md:text-left">
-                <h1 className="text-2xl font-bold text-white">
-                  {username || "Guest"}
-                </h1>
-                <p className="text-cyan-300">
-                  <span className="inline-flex items-center">
-                    <span
-                      className={`inline-block w-2 h-2 rounded-full mr-2 ${getStatusColor(
+          <div className="relative h-48 bg-gradient-to-r from-cyan-900/30 to-purple-900/30">
+            <div className="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-gray-900 to-transparent">
+              <div className="flex items-end space-x-4">
+                <div className="relative">
+                  <div className="w-24 h-24 rounded-full bg-gray-800 border-4 border-gray-800 overflow-hidden">
+                    {imageUrl ? (
+                      <img
+                        src={imageUrl}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-cyan-500 to-purple-600 text-white text-3xl font-bold">
+                        {username?.charAt(0) || "U"}
+                      </div>
+                    )}
+                    <div
+                      className={`absolute bottom-0 right-0 w-4 h-4 rounded-full border-2 border-gray-800 ${getStatusColor(
                         userStatus
                       )}`}
+                    ></div>
+                  </div>
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold text-white">{username}</h1>
+                  <div className="flex items-center text-gray-400">
+                    <span
+                      className={`w-2 h-2 rounded-full ${getStatusColor(
+                        userStatus
+                      )} mr-2`}
                     ></span>
-                    {userStatus}
-                  </span>
-                </p>
-                <p className="text-gray-300 mt-1 flex items-center">
-                  {currentUser?.email}
-                  {showEmail ? (
-                    <span className="ml-2 text-xs text-green-400 bg-green-900/30 px-1.5 py-0.5 rounded">
-                      Public
-                    </span>
-                  ) : (
-                    <span className="ml-2 text-xs text-gray-400 bg-gray-700/50 px-1.5 py-0.5 rounded">
-                      Private
-                    </span>
-                  )}
-                </p>
+                    <span>{userStatus}</span>
+                  </div>
+                </div>
               </div>
+            </div>
+          </div>
 
+          {/* Tabs Navigation */}
+          <div className="border-b border-gray-700">
+            <div className="flex flex-wrap">
+              {/* Profile tab - basic info only */}
               <button
-                onClick={() => setIsEditing(!isEditing)}
-                className="ml-auto mt-4 md:mt-0 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg transition-colors"
+                onClick={() => setActiveTab("profile")}
+                className={`px-6 py-3 font-medium ${
+                  activeTab === "profile"
+                    ? "text-cyan-400 border-b-2 border-cyan-400"
+                    : "text-gray-400 hover:text-white"
+                }`}
               >
-                {isEditing ? "Cancel" : "Edit Profile"}
+                Basic Info
+              </button>
+              
+              {/* Settings tab - combines privacy and notifications */}
+              <button
+                onClick={() => setActiveTab("settings")}
+                className={`px-6 py-3 font-medium ${
+                  activeTab === "settings"
+                    ? "text-cyan-400 border-b-2 border-cyan-400"
+                    : "text-gray-400 hover:text-white"
+                }`}
+              >
+                Account Settings
+              </button>
+              
+              {/* Gaming Preferences tab */}
+              <button
+                onClick={() => setActiveTab("gaming")}
+                className={`px-6 py-3 font-medium ${
+                  activeTab === "gaming"
+                    ? "text-cyan-400 border-b-2 border-cyan-400"
+                    : "text-gray-400 hover:text-white"
+                }`}
+              >
+                Gaming Preferences
+              </button>
+              
+              {/* Privacy tab */}
+              <button
+                onClick={() => setActiveTab("privacy")}
+                className={`px-6 py-3 font-medium ${
+                  activeTab === "privacy"
+                    ? "text-cyan-400 border-b-2 border-cyan-400"
+                    : "text-gray-400 hover:text-white"
+                }`}
+              >
+                Privacy
+              </button>
+              
+              {/* Notifications tab */}
+              <button
+                onClick={() => setActiveTab("notifications")}
+                className={`px-6 py-3 font-medium ${
+                  activeTab === "notifications"
+                    ? "text-cyan-400 border-b-2 border-cyan-400"
+                    : "text-gray-400 hover:text-white"
+                }`}
+              >
+                Notifications
               </button>
             </div>
           </div>
 
-          {/* Profile Content */}
+          {/* Content Area */}
           <div className="p-6">
+            {/* Success/Error Message */}
             {message.text && (
               <div
-                className={`mb-4 p-3 rounded ${
+                className={`mb-4 p-3 rounded-lg ${
                   message.type === "success"
-                    ? "bg-green-900/50 text-green-300"
-                    : "bg-red-900/50 text-red-300"
+                    ? "bg-green-900/30 border border-green-800 text-green-400"
+                    : "bg-red-900/30 border border-red-800 text-red-400"
                 }`}
               >
                 {message.text}
               </div>
             )}
 
-            {isEditing ? (
-              <form onSubmit={handleProfileUpdate}>
+            {/* Account Settings Tab */}
+            {activeTab === "settings" && (
+              <div className="space-y-6">
+                <h2 className="text-xl font-semibold text-white mb-4">
+                  Account Settings
+                </h2>
+                
                 <div className="space-y-4">
-                  <div>
-                    <label className="block text-gray-300 mb-2">Username</label>
-                    <input
-                      type="text"
-                      value={newUsername}
-                      onChange={(e) => setNewUsername(e.target.value)}
-                      className="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-gray-300 mb-2">Bio</label>
-                    <textarea
-                      value={bio}
-                      onChange={(e) => setBio(e.target.value)}
-                      className="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500 h-32"
-                      placeholder="Tell us about yourself..."
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-gray-300 mb-2">
-                      Profile Image
-                    </label>
-                    <div className="flex items-center space-x-4">
-                      <div className="w-24 h-24 rounded-full bg-gray-800 overflow-hidden border border-gray-700">
-                        {imageUrl ? (
-                          <img
-                            src={imageUrl}
-                            alt="Profile preview"
-                            className="w-full h-full object-cover"
+                  {/* Account Security */}
+                  <div className="bg-gray-800 rounded-lg p-4">
+                    <h3 className="text-lg font-medium text-white mb-3">Account Security</h3>
+                    
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-gray-300 mb-2">Email Address</label>
+                        <div className="flex items-center">
+                          <input 
+                            type="email" 
+                            value={currentUser?.email || ""}
+                            disabled
+                            className="flex-1 bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500"
                           />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-3xl font-bold text-gray-500 bg-gradient-to-br from-cyan-500/20 to-purple-600/20">
-                            {username?.substring(0, 2).toUpperCase() || "GV"}
-                          </div>
-                        )}
+                          <button
+                            type="button"
+                            className="ml-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                          >
+                            Change
+                          </button>
+                        </div>
                       </div>
-                      <div className="flex-1">
+                      
+                      <div>
+                        <label className="block text-gray-300 mb-2">Password</label>
+                        <button
+                          type="button"
+                          className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                        >
+                          Change Password
+                        </button>
+                      </div>
+                      
+                      <div className="pt-2">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h4 className="font-medium text-white">Two-Factor Authentication</h4>
+                            <p className="text-sm text-gray-400">Add an extra layer of security to your account</p>
+                          </div>
+                          <button
+                            type="button"
+                            className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                          >
+                            Enable
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Account Preferences */}
+                  <div className="bg-gray-800 rounded-lg p-4">
+                    <h3 className="text-lg font-medium text-white mb-3">Account Preferences</h3>
+                    
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-gray-300 mb-2">Language</label>
+                        <select className="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                          <option value="en">English</option>
+                          <option value="es">Spanish</option>
+                          <option value="fr">French</option>
+                          <option value="de">German</option>
+                          <option value="ja">Japanese</option>
+                        </select>
+                      </div>
+                      
+                      <div>
+                        <label className="block text-gray-300 mb-2">Time Zone</label>
+                        <select className="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                          <option value="utc">UTC</option>
+                          <option value="est">Eastern Time (ET)</option>
+                          <option value="cet">Central European Time (CET)</option>
+                          <option value="pst">Pacific Time (PT)</option>
+                        </select>
+                      </div>
+                      
+                      <div className="flex items-center">
                         <input
-                          type="file"
-                          id="profile-image"
-                          accept="image/*"
-                          className="hidden"
-                          onChange={handleImageChange}
+                          type="checkbox"
+                          id="showEmail"
+                          checked={showEmail}
+                          onChange={(e) => setShowEmail(e.target.checked)}
+                          className="w-4 h-4 bg-gray-700 border-gray-600 rounded focus:ring-cyan-500"
                         />
                         <label
-                          htmlFor="profile-image"
-                          className="px-4 py-2 bg-gray-700 text-white rounded-lg cursor-pointer hover:bg-gray-600 transition-colors inline-block"
+                          htmlFor="showEmail"
+                          className="ml-2 text-gray-300"
                         >
-                          Choose Image
+                          Show email on profile
                         </label>
-                        {imageFile && (
-                          <div className="mt-2 text-xs text-gray-400">
-                            Image ready to upload
-                          </div>
-                        )}
                       </div>
                     </div>
                   </div>
-
-                  <div>
-                    <label className="block text-gray-300 mb-2">Status</label>
-                    <StatusSelector variant="buttons" />
-                  </div>
-
-                  <div>
-                    <label className="block text-gray-300 mb-2">
-                      Privacy Settings
-                    </label>
-                    <div className="bg-gray-700/50 p-4 rounded-lg space-y-3">
+                  
+                  {/* Linked Accounts */}
+                  <div className="bg-gray-800 rounded-lg p-4">
+                    <h3 className="text-lg font-medium text-white mb-3">Linked Accounts</h3>
+                    
+                    <div className="space-y-3">
                       <div className="flex items-center justify-between">
-                        <div>
-                          <div className="font-medium text-white">
-                            Email Visibility
+                        <div className="flex items-center">
+                          <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-3">
+                            <i className="fab fa-discord text-white"></i>
                           </div>
-                          <div className="text-sm text-gray-400">
-                            Allow other users to see your email address
+                          <span className="text-gray-300">Discord</span>
+                        </div>
+                        <button className="text-cyan-400 hover:text-cyan-300">Connect</button>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center">
+                          <div className="w-8 h-8 bg-blue-800 rounded-full flex items-center justify-center mr-3">
+                            <i className="fab fa-steam text-white"></i>
+                          </div>
+                          <span className="text-gray-300">Steam</span>
+                        </div>
+                        <button className="text-cyan-400 hover:text-cyan-300">Connect</button>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center">
+                          <div className="w-8 h-8 bg-green-700 rounded-full flex items-center justify-center mr-3">
+                            <i className="fab fa-xbox text-white"></i>
+                          </div>
+                          <span className="text-gray-300">Xbox</span>
+                        </div>
+                        <button className="text-cyan-400 hover:text-cyan-300">Connect</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="pt-4 flex justify-end">
+                  <button
+                    onClick={handleProfileUpdate}
+                    disabled={loading}
+                    className="px-4 py-2 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white rounded-lg transition-colors"
+                  >
+                    {loading ? "Saving..." : "Save Settings"}
+                  </button>
+                </div>
+              </div>
+            )}
+            
+            {/* Profile Tab */}
+            {activeTab === "profile" && (
+              <>
+                {isEditing ? (
+                  <form onSubmit={handleProfileUpdate}>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-gray-300 mb-2">
+                          Username
+                        </label>
+                        <input
+                          type="text"
+                          value={newUsername}
+                          onChange={(e) => setNewUsername(e.target.value)}
+                          className="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-gray-300 mb-2">Bio</label>
+                        <textarea
+                          value={bio}
+                          onChange={(e) => setBio(e.target.value)}
+                          className="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500 h-32"
+                          placeholder="Tell us about yourself..."
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-gray-300 mb-2">
+                          Profile Image
+                        </label>
+                        <div className="flex items-center space-x-4">
+                          <div className="w-24 h-24 rounded-full bg-gray-800 overflow-hidden border border-gray-700">
+                            {imageUrl ? (
+                              <img
+                                src={imageUrl}
+                                alt="Profile preview"
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-3xl font-bold text-gray-500 bg-gradient-to-br from-cyan-500/20 to-purple-600/20">
+                                {newUsername.charAt(0) || "U"}
+                              </div>
+                            )}
+                          </div>
+                          <div>
+                            <label className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg cursor-pointer transition-colors">
+                              Choose Image
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleImageChange}
+                                className="hidden"
+                              />
+                            </label>
                           </div>
                         </div>
-                        <label className="relative inline-flex items-center cursor-pointer">
-                          <input
-                            type="checkbox"
-                            className="sr-only peer"
-                            checked={showEmail}
-                            onChange={() => setShowEmail(!showEmail)}
-                          />
-                          <div className="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
+                      </div>
+
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          id="showEmail"
+                          checked={showEmail}
+                          onChange={(e) => setShowEmail(e.target.checked)}
+                          className="w-4 h-4 bg-gray-700 border-gray-600 rounded focus:ring-cyan-500"
+                        />
+                        <label
+                          htmlFor="showEmail"
+                          className="ml-2 text-gray-300"
+                        >
+                          Show email on profile
                         </label>
                       </div>
+
+                      <div className="pt-4 flex justify-end space-x-3">
+                        <button
+                          type="button"
+                          onClick={() => setIsEditing(false)}
+                          className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          disabled={loading}
+                          className="px-4 py-2 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white rounded-lg transition-colors"
+                        >
+                          {loading ? "Saving..." : "Save Changes"}
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                ) : (
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="text-lg font-medium text-gray-300 mb-2">
+                        About Me
+                      </h3>
+                      <p className="text-gray-400">
+                        {bio || "No bio provided yet."}
+                      </p>
+                    </div>
+
+                    {showEmail && currentUser?.email && (
+                      <div>
+                        <h3 className="text-lg font-medium text-gray-300 mb-2">
+                          Email
+                        </h3>
+                        <p className="text-gray-400">{currentUser.email}</p>
+                      </div>
+                    )}
+
+                    <div className="pt-4">
+                      <button
+                        onClick={() => setIsEditing(true)}
+                        className="px-4 py-2 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white rounded-lg transition-colors"
+                      >
+                        Edit Profile
+                      </button>
                     </div>
                   </div>
+                )}
+              </>
+            )}
 
-                  <div className="pt-4">
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className="px-6 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg transition-colors disabled:opacity-50"
-                    >
-                      {loading ? "Saving..." : "Save Changes"}
-                    </button>
-                  </div>
-                </div>
-              </form>
-            ) : (
+            {/* Gaming Preferences Tab */}
+            {activeTab === "gaming" && (
               <div className="space-y-6">
-                <div>
-                  <h2 className="text-xl font-semibold text-white mb-2">
-                    About Me
-                  </h2>
-                  <p className="text-gray-300">
-                    {bio ||
-                      "No bio provided yet. Click 'Edit Profile' to add one!"}
-                  </p>
-                </div>
+                <h2 className="text-xl font-semibold text-white mb-4">
+                  Gaming Preferences
+                </h2>
 
                 <div>
-                  <h2 className="text-xl font-semibold text-white mb-2">
-                    Game Stats
-                  </h2>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="bg-gray-700 p-4 rounded-lg text-center">
-                      <div className="text-2xl font-bold text-cyan-400">0</div>
-                      <div className="text-gray-400 text-sm">Games Played</div>
-                    </div>
-                    <div className="bg-gray-700 p-4 rounded-lg text-center">
-                      <div className="text-2xl font-bold text-cyan-400">0</div>
-                      <div className="text-gray-400 text-sm">Achievements</div>
-                    </div>
-                    <div className="bg-gray-700 p-4 rounded-lg text-center">
-                      <div className="text-2xl font-bold text-cyan-400">0</div>
-                      <div className="text-gray-400 text-sm">Friends</div>
-                    </div>
-                    <div className="bg-gray-700 p-4 rounded-lg text-center">
-                      <div className="text-2xl font-bold text-cyan-400">0</div>
-                      <div className="text-gray-400 text-sm">Servers</div>
-                    </div>
+                  <label className="block text-gray-300 mb-2">
+                    Favorite Game Genres
+                  </label>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                    {[
+                      "RPG",
+                      "FPS",
+                      "MOBA",
+                      "MMO",
+                      "Battle Royale",
+                      "Strategy",
+                      "Sandbox",
+                      "Sports",
+                      "Racing",
+                      "Simulation",
+                    ].map((genre) => (
+                      <div key={genre} className="flex items-center">
+                        <input
+                          type="checkbox"
+                          id={`genre-${genre}`}
+                          checked={favoriteGenres.includes(genre)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setFavoriteGenres([...favoriteGenres, genre]);
+                            } else {
+                              setFavoriteGenres(
+                                favoriteGenres.filter((g) => g !== genre)
+                              );
+                            }
+                          }}
+                          className="w-4 h-4 bg-gray-700 border-gray-600 rounded focus:ring-cyan-500"
+                        />
+                        <label
+                          htmlFor={`genre-${genre}`}
+                          className="ml-2 text-gray-300"
+                        >
+                          {genre}
+                        </label>
+                      </div>
+                    ))}
                   </div>
                 </div>
 
-                <div>
-                  <h2 className="text-xl font-semibold text-white mb-2">
-                    Recent Activity
-                  </h2>
-                  <div className="bg-gray-700 rounded-lg p-4">
-                    <p className="text-gray-400">
-                      No recent activity to display.
-                    </p>
+                <div className="pt-4 flex justify-end">
+                  <button
+                    onClick={handleProfileUpdate}
+                    disabled={loading}
+                    className="px-4 py-2 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white rounded-lg transition-colors"
+                  >
+                    {loading ? "Saving..." : "Save Preferences"}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Notifications Tab */}
+            {activeTab === "notifications" && (
+              <div className="space-y-6">
+                <h2 className="text-xl font-semibold text-white mb-4">
+                  Notification Settings
+                </h2>
+
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-3 bg-gray-800 rounded-lg">
+                    <div>
+                      <h3 className="font-medium text-white">
+                        Direct Messages
+                      </h3>
+                      <p className="text-sm text-gray-400">
+                        Get notified when you receive a message
+                      </p>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="sr-only peer"
+                        checked={notificationSettings.messages}
+                        onChange={(e) =>
+                          setNotificationSettings({
+                            ...notificationSettings,
+                            messages: e.target.checked,
+                          })
+                        }
+                      />
+                      <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-cyan-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
+                    </label>
                   </div>
+
+                  <div className="flex items-center justify-between p-3 bg-gray-800 rounded-lg">
+                    <div>
+                      <h3 className="font-medium text-white">
+                        Friend Requests
+                      </h3>
+                      <p className="text-sm text-gray-400">
+                        Get notified about new friend requests
+                      </p>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="sr-only peer"
+                        checked={notificationSettings.friendRequests}
+                        onChange={(e) =>
+                          setNotificationSettings({
+                            ...notificationSettings,
+                            friendRequests: e.target.checked,
+                          })
+                        }
+                      />
+                      <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-cyan-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
+                    </label>
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 bg-gray-800 rounded-lg">
+                    <div>
+                      <h3 className="font-medium text-white">Game Invites</h3>
+                      <p className="text-sm text-gray-400">
+                        Get notified when someone invites you to play
+                      </p>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="sr-only peer"
+                        checked={notificationSettings.gameInvites}
+                        onChange={(e) =>
+                          setNotificationSettings({
+                            ...notificationSettings,
+                            gameInvites: e.target.checked,
+                          })
+                        }
+                      />
+                      <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-cyan-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
+                    </label>
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 bg-gray-800 rounded-lg">
+                    <div>
+                      <h3 className="font-medium text-white">News & Updates</h3>
+                      <p className="text-sm text-gray-400">
+                        Receive news about game updates and events
+                      </p>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="sr-only peer"
+                        checked={notificationSettings.newsAndUpdates}
+                        onChange={(e) =>
+                          setNotificationSettings({
+                            ...notificationSettings,
+                            newsAndUpdates: e.target.checked,
+                          })
+                        }
+                      />
+                      <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-cyan-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="pt-4 flex justify-end">
+                  <button
+                    onClick={handleProfileUpdate}
+                    disabled={loading}
+                    className="px-4 py-2 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white rounded-lg transition-colors"
+                  >
+                    {loading ? "Saving..." : "Save Notification Settings"}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Privacy Tab */}
+            {activeTab === "privacy" && (
+              <div className="space-y-6">
+                <h2 className="text-xl font-semibold text-white mb-4">
+                  Privacy Settings
+                </h2>
+
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-3 bg-gray-800 rounded-lg">
+                    <div>
+                      <h3 className="font-medium text-white">
+                        Show Online Status
+                      </h3>
+                      <p className="text-sm text-gray-400">
+                        Let others see when you're online
+                      </p>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="sr-only peer"
+                        checked={privacySettings.showOnlineStatus}
+                        onChange={(e) =>
+                          setPrivacySettings({
+                            ...privacySettings,
+                            showOnlineStatus: e.target.checked,
+                          })
+                        }
+                      />
+                      <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-cyan-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
+                    </label>
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 bg-gray-800 rounded-lg">
+                    <div>
+                      <h3 className="font-medium text-white">
+                        Show Current Game
+                      </h3>
+                      <p className="text-sm text-gray-400">
+                        Let others see what game you're playing
+                      </p>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="sr-only peer"
+                        checked={privacySettings.showCurrentGame}
+                        onChange={(e) =>
+                          setPrivacySettings({
+                            ...privacySettings,
+                            showCurrentGame: e.target.checked,
+                          })
+                        }
+                      />
+                      <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-cyan-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
+                    </label>
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 bg-gray-800 rounded-lg">
+                    <div>
+                      <h3 className="font-medium text-white">
+                        Allow Friend Requests
+                      </h3>
+                      <p className="text-sm text-gray-400">
+                        Let other users send you friend requests
+                      </p>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="sr-only peer"
+                        checked={privacySettings.allowFriendRequests}
+                        onChange={(e) =>
+                          setPrivacySettings({
+                            ...privacySettings,
+                            allowFriendRequests: e.target.checked,
+                          })
+                        }
+                      />
+                      <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-cyan-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
+                    </label>
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 bg-gray-800 rounded-lg">
+                    <div>
+                      <h3 className="font-medium text-white">
+                        Show Game Activity
+                      </h3>
+                      <p className="text-sm text-gray-400">
+                        Share your achievements and game stats
+                      </p>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="sr-only peer"
+                        checked={privacySettings.showGameActivity}
+                        onChange={(e) =>
+                          setPrivacySettings({
+                            ...privacySettings,
+                            showGameActivity: e.target.checked,
+                          })
+                        }
+                      />
+                      <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-cyan-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="pt-4 flex justify-end">
+                  <button
+                    onClick={handleProfileUpdate}
+                    disabled={loading}
+                    className="px-4 py-2 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white rounded-lg transition-colors"
+                  >
+                    {loading ? "Saving..." : "Save Privacy Settings"}
+                  </button>
                 </div>
               </div>
             )}

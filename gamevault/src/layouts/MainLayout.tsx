@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { useChat } from "../contexts/ChatContext";
 import { useOutsideClick } from "../hooks/useOutsideClick";
-import ServerSidebar from "./ServerSidebar";
+// ServerSidebar removed as requested
 import ChannelSidebar from "./ChannelSidebar";
 import StatusSelector, {
   getStatusColor,
@@ -253,8 +253,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
       </header>
 
       <div className="flex h-[calc(100vh-5rem)] relative">
-        {/* Main content with sidebars */}
-        <ServerSidebar />
+        {/* Main content with sidebar */}
         {inServer && <ChannelSidebar />}
         <main className="flex-1 overflow-y-auto pb-16 md:pb-0">{children}</main>
 

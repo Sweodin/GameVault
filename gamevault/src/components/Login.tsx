@@ -39,11 +39,15 @@ export default function Login(): JSX.Element {
 
           <h2 className="text-2xl font-bold text-white mb-6">Log In</h2>
 
-          <div className="bg-red-900/20 border border-red-800/30 text-red-300 px-4 py-3 rounded-lg mb-6 hidden">
-            Failed to log in: Invalid credentials
+          <div
+            className={`bg-red-900/20 border border-red-800/30 text-red-300 px-4 py-3 rounded-lg mb-6 ${
+              error ? "block" : "hidden"
+            }`}
+          >
+            {error}
           </div>
 
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label className="block text-gray-300 text-sm font-medium mb-2">
                 Email
@@ -52,6 +56,8 @@ export default function Login(): JSX.Element {
                 type="email"
                 className="w-full bg-gray-900/50 border border-gray-700 focus:border-cyan-500 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all"
                 required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
 
@@ -63,6 +69,8 @@ export default function Login(): JSX.Element {
                 type="password"
                 className="w-full bg-gray-900/50 border border-gray-700 focus:border-cyan-500 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all"
                 required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
 
@@ -70,8 +78,9 @@ export default function Login(): JSX.Element {
               <button
                 type="submit"
                 className="w-full bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white py-3 rounded-lg font-medium transition-all shadow-lg shadow-purple-900/30"
+                disabled={loading}
               >
-                Log In
+                {loading ? "Logging in..." : "Log In"}
               </button>
             </div>
           </form>

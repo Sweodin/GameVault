@@ -65,31 +65,122 @@ export default function MainLayout({ children }: MainLayoutProps) {
                 Nexus
               </h1>
 
-              <nav className="hidden md:flex space-x-6">
+              <nav className="hidden md:flex items-center space-x-8">
+                {/* Home Link */}
                 <a
                   href="/"
-                  className="text-white hover:text-cyan-300 transition-colors"
+                  className="flex items-center text-white hover:text-cyan-300 transition-colors"
                 >
-                  Home
+                  <i className="fas fa-home mr-2"></i>
+                  <span>Home</span>
                 </a>
-                <a
-                  href="/browse"
-                  className="text-gray-400 hover:text-cyan-300 transition-colors"
-                >
-                  Browse
-                </a>
-                <a
-                  href="/library"
-                  className="text-gray-400 hover:text-cyan-300 transition-colors"
-                >
-                  Library
-                </a>
-                <a
-                  href="/friends"
-                  className="text-gray-400 hover:text-cyan-300 transition-colors"
-                >
-                  Friends
-                </a>
+                
+                {/* Browse Dropdown */}
+                <div className="relative group">
+                  <a
+                    href="/browse"
+                    className="flex items-center text-gray-400 hover:text-cyan-300 transition-colors group-hover:text-cyan-300"
+                  >
+                    <i className="fas fa-compass mr-2"></i>
+                    <span>Browse</span>
+                    <i className="fas fa-chevron-down text-xs ml-2 transition-transform group-hover:rotate-180"></i>
+                  </a>
+                  
+                  {/* Browse Dropdown Menu */}
+                  <div className="absolute left-0 mt-2 w-56 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                    <div className="py-2 bg-gray-800 rounded-lg shadow-xl border border-gray-700">
+                      <div className="px-4 py-2 text-xs font-semibold text-gray-400 border-b border-gray-700">CATEGORIES</div>
+                      <a href="/browse?category=action" className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">
+                        <div className="flex items-center">
+                          <span className="w-8 text-center"><i className="fas fa-bolt text-yellow-500"></i></span>
+                          <span>Action</span>
+                        </div>
+                      </a>
+                      <a href="/browse?category=rpg" className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">
+                        <div className="flex items-center">
+                          <span className="w-8 text-center"><i className="fas fa-hat-wizard text-purple-500"></i></span>
+                          <span>RPG</span>
+                        </div>
+                      </a>
+                      <a href="/browse?category=strategy" className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">
+                        <div className="flex items-center">
+                          <span className="w-8 text-center"><i className="fas fa-chess text-blue-500"></i></span>
+                          <span>Strategy</span>
+                        </div>
+                      </a>
+                      <a href="/browse?category=sports" className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">
+                        <div className="flex items-center">
+                          <span className="w-8 text-center"><i className="fas fa-futbol text-green-500"></i></span>
+                          <span>Sports</span>
+                        </div>
+                      </a>
+                      <div className="border-t border-gray-700 my-1"></div>
+                      <a href="/browse" className="block px-4 py-2 text-sm text-cyan-400 hover:bg-gray-700">
+                        <div className="flex items-center">
+                          <span className="w-8 text-center"><i className="fas fa-th-large"></i></span>
+                          <span>All Categories</span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Library Dropdown */}
+                <div className="relative group">
+                  <a
+                    href="/library"
+                    className="flex items-center text-gray-400 hover:text-cyan-300 transition-colors group-hover:text-cyan-300"
+                  >
+                    <i className="fas fa-gamepad mr-2"></i>
+                    <span>Library</span>
+                    <i className="fas fa-chevron-down text-xs ml-2 transition-transform group-hover:rotate-180"></i>
+                  </a>
+                  
+                  {/* Library Dropdown Menu */}
+                  <div className="absolute left-0 mt-2 w-56 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                    <div className="py-2 bg-gray-800 rounded-lg shadow-xl border border-gray-700">
+                      <a href="/library?filter=recent" className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">
+                        <div className="flex items-center">
+                          <span className="w-8 text-center"><i className="fas fa-clock text-blue-400"></i></span>
+                          <span>Recently Played</span>
+                        </div>
+                      </a>
+                      <a href="/library?filter=favorites" className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">
+                        <div className="flex items-center">
+                          <span className="w-8 text-center"><i className="fas fa-star text-yellow-400"></i></span>
+                          <span>Favorites</span>
+                        </div>
+                      </a>
+                      <a href="/library?filter=installed" className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">
+                        <div className="flex items-center">
+                          <span className="w-8 text-center"><i className="fas fa-download text-green-400"></i></span>
+                          <span>Installed</span>
+                        </div>
+                      </a>
+                      <div className="border-t border-gray-700 my-1"></div>
+                      <a href="/library" className="block px-4 py-2 text-sm text-cyan-400 hover:bg-gray-700">
+                        <div className="flex items-center">
+                          <span className="w-8 text-center"><i className="fas fa-th-large"></i></span>
+                          <span>All Games</span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Friends Link with Notification */}
+                <div className="relative">
+                  <a
+                    href="/friends"
+                    className="flex items-center text-gray-400 hover:text-cyan-300 transition-colors"
+                  >
+                    <i className="fas fa-users mr-2"></i>
+                    <span>Friends</span>
+                    <div className="ml-2 w-5 h-5 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-glow">
+                      3
+                    </div>
+                  </a>
+                </div>
               </nav>
             </div>
 
@@ -210,32 +301,52 @@ export default function MainLayout({ children }: MainLayoutProps) {
                       <a
                         href="/profile"
                         className="block px-4 py-2 text-sm hover:bg-gray-700"
+                        onClick={() => setDropdownOpen(false)}
                       >
-                        Profile
+                        <div className="flex items-center">
+                          <i className="fas fa-user text-cyan-500 w-5"></i>
+                          <span>My Profile</span>
+                        </div>
                       </a>
                       <a
-                        href="/settings"
+                        href="/profile?tab=settings"
                         className="block px-4 py-2 text-sm hover:bg-gray-700"
+                        onClick={() => setDropdownOpen(false)}
                       >
-                        Settings
+                        <div className="flex items-center">
+                          <i className="fas fa-cog text-cyan-500 w-5"></i>
+                          <span>Account Settings</span>
+                        </div>
                       </a>
                       <a
-                        href="/preferences"
+                        href="/profile?tab=gaming"
                         className="block px-4 py-2 text-sm hover:bg-gray-700"
+                        onClick={() => setDropdownOpen(false)}
                       >
-                        User Preferences
+                        <div className="flex items-center">
+                          <i className="fas fa-gamepad text-cyan-500 w-5"></i>
+                          <span>Gaming Preferences</span>
+                        </div>
                       </a>
                       <a
                         href="/help"
                         className="block px-4 py-2 text-sm hover:bg-gray-700"
+                        onClick={() => setDropdownOpen(false)}
                       >
-                        Help & Support
+                        <div className="flex items-center">
+                          <i className="fas fa-question-circle text-cyan-500 w-5"></i>
+                          <span>Help & Support</span>
+                        </div>
                       </a>
                       <a
                         href="/about"
                         className="block px-4 py-2 text-sm hover:bg-gray-700"
+                        onClick={() => setDropdownOpen(false)}
                       >
-                        About (v1.0.0)
+                        <div className="flex items-center">
+                          <i className="fas fa-info-circle text-cyan-500 w-5"></i>
+                          <span>About (v1.0.0)</span>
+                        </div>
                       </a>
                       <button
                         onClick={handleLogout}

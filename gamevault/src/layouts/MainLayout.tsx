@@ -168,18 +168,53 @@ export default function MainLayout({ children }: MainLayoutProps) {
                   </div>
                 </div>
                 
-                {/* Friends Link with Notification */}
-                <div className="relative">
+                {/* Friends Dropdown */}
+                <div className="relative group">
                   <a
                     href="/friends"
-                    className="flex items-center text-gray-400 hover:text-cyan-300 transition-colors"
+                    className="flex items-center text-gray-400 hover:text-cyan-300 transition-colors group-hover:text-cyan-300"
                   >
                     <i className="fas fa-users mr-2"></i>
                     <span>Friends</span>
                     <div className="ml-2 w-5 h-5 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-glow">
                       3
                     </div>
+                    <i className="fas fa-chevron-down text-xs ml-2 transition-transform group-hover:rotate-180"></i>
                   </a>
+                  
+                  {/* Friends Dropdown Menu */}
+                  <div className="absolute left-0 mt-2 w-56 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                    <div className="py-2 bg-gray-800 rounded-lg shadow-xl border border-gray-700">
+                      <a href="/friends?filter=online" className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">
+                        <div className="flex items-center">
+                          <span className="w-8 text-center"><i className="fas fa-circle text-green-500 text-xs"></i></span>
+                          <span>Online Friends</span>
+                        </div>
+                      </a>
+                      <a href="/friends?filter=requests" className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">
+                        <div className="flex items-center">
+                          <span className="w-8 text-center"><i className="fas fa-user-plus text-blue-400"></i></span>
+                          <span>Friend Requests</span>
+                          <div className="ml-2 w-5 h-5 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-xs font-bold text-white">
+                            3
+                          </div>
+                        </div>
+                      </a>
+                      <a href="/friends?filter=add" className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">
+                        <div className="flex items-center">
+                          <span className="w-8 text-center"><i className="fas fa-plus text-cyan-400"></i></span>
+                          <span>Add Friend</span>
+                        </div>
+                      </a>
+                      <div className="border-t border-gray-700 my-1"></div>
+                      <a href="/friends" className="block px-4 py-2 text-sm text-cyan-400 hover:bg-gray-700">
+                        <div className="flex items-center">
+                          <span className="w-8 text-center"><i className="fas fa-th-large"></i></span>
+                          <span>All Friends</span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
                 </div>
               </nav>
             </div>
@@ -393,10 +428,13 @@ export default function MainLayout({ children }: MainLayoutProps) {
           </a>
           <a
             href="/friends"
-            className="flex flex-col items-center text-gray-400 hover:text-cyan-400"
+            className="flex flex-col items-center text-gray-400 hover:text-cyan-400 relative"
           >
             <i className="fas fa-users text-lg"></i>
             <span className="text-xs mt-1">Friends</span>
+            <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-xs font-bold text-white">
+              3
+            </div>
           </a>
           <a
             href="/profile"

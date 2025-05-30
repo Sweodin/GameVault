@@ -7,6 +7,9 @@ export interface Game {
   onlinePlayers: number;
   trending: boolean;
   popularChannels: string[];
+  lastPlayed?: Date | null;
+  isFavorite?: boolean;
+  isInstalled?: boolean;
 }
 
 export interface GameCardProps {

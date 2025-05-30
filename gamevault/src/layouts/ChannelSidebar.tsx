@@ -4,7 +4,6 @@ import {
   ChevronDown,
   ChevronRight,
   Hash,
-  Volume2,
   Star,
   Gamepad2,
   Trophy,
@@ -70,12 +69,12 @@ export default function ChannelSidebar() {
           type: "event",
           icon: <Trophy className="w-4 h-4" />,
         },
-        {
+        {/* Commented out voice lounges to focus on room and chat
           id: "voice-lounges",
           name: "Voice Lounges",
           type: "voice",
           icon: <Volume2 className="w-4 h-4" />,
-        },
+        */},
         {
           id: "chat",
           name: "Chat Messages",

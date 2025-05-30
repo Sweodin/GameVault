@@ -9,6 +9,11 @@ import Login from "./components/Login";
 import Signup from "./components/Signup";
 import Chat from "./pages/Chat";
 import GamePage from "./pages/GamePage";
+import Browse from "./pages/Browse";
+import Library from "./pages/Library";
+import Friends from "./pages/Friends";
+import About from "./components/About";
+import Help from "./components/Help";
 
 function App(): JSX.Element {
   return (
@@ -46,6 +51,46 @@ function App(): JSX.Element {
               element={
                 <PrivateRoute>
                   <GamePage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/browse"
+              element={
+                <PrivateRoute>
+                  <Browse />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/library"
+              element={
+                <PrivateRoute>
+                  <Library />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/friends"
+              element={
+                <PrivateRoute>
+                  <Friends />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/about"
+              element={
+                <PrivateRoute>
+                  <About />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/help"
+              element={
+                <PrivateRoute>
+                  <Help />
                 </PrivateRoute>
               }
             />

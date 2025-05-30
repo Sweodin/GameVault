@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Users, Search, Plus, X } from "lucide-react";
+import { useLocation } from "react-router-dom";
 import ChatList from "../components/chat/ChatList";
 import ChatWindow from "../components/chat/ChatWindow";
 import { useAuth } from "../contexts/AuthContext";
+import { useChat } from "../contexts/ChatContext";
 import MainLayout from "../layouts/MainLayout";
 
 export default function Chat() {
@@ -10,6 +12,31 @@ export default function Chat() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showNewChatModal, setShowNewChatModal] = useState(false);
   const { currentUser } = useAuth();
+  const { setActiveChat } = useChat();
+  const location = useLocation();
+
+  // Check for channel parameter in URL
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const channelId = queryParams.get("channel");
+
+    if (channelId) {
+      console.log(`Setting active chat from URL parameter: ${channelId}`);
+      
+      // Add a small delay to ensure context is fully initialized
+      setTimeout(() => {
+        setActiveChat(channelId);
+      }, 300);
+    }
+  }, [location.search, setActiveChat]);
+  
+  // Debug output for active chat
+  const { activeChat } = useChat();
+  useEffect(() => {
+    if (activeChat) {
+      console.log('Current active chat:', activeChat);
+    }
+  }, [activeChat]);
 
   // Mock friends data - in a real app, this would come from a database
   const friends = [
@@ -19,7 +46,7 @@ export default function Chat() {
     { id: "friend4", name: "Jordan Lee", status: "away" },
   ];
 
-  const filteredFriends = friends.filter(friend =>
+  const filteredFriends = friends.filter((friend) =>
     friend.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -27,7 +54,7 @@ export default function Chat() {
     <MainLayout>
       <div className="flex h-full bg-gray-900 text-white">
         {/* Chat sidebar */}
-        <div 
+        <div
           className={`${
             showSidebar ? "w-80" : "w-0"
           } bg-gray-800 border-r border-gray-700 flex flex-col transition-all duration-300`}
@@ -38,7 +65,7 @@ export default function Chat() {
               <div className="p-4 border-b border-gray-700 flex justify-between items-center">
                 <h2 className="font-bold text-lg">Messages</h2>
                 <div className="flex space-x-2">
-                  <button 
+                  <button
                     onClick={() => setShowNewChatModal(true)}
                     className="p-2 rounded-full hover:bg-gray-700 text-gray-400 hover:text-white"
                     title="New message"

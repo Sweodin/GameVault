@@ -35,29 +35,29 @@ export default function Profile() {
     showGameActivity: true,
   });
   const [activeTab, setActiveTab] = useState("profile");
-
+  
   // Define tabs for the profile page
   const tabs = [
     { id: "profile", label: "Basic Info", icon: "fas fa-user" },
     { id: "settings", label: "Account Settings", icon: "fas fa-cog" },
     { id: "gaming", label: "Gaming Preferences", icon: "fas fa-gamepad" },
     { id: "privacy", label: "Privacy", icon: "fas fa-lock" },
-    { id: "notifications", label: "Notifications", icon: "fas fa-bell" },
+    { id: "notifications", label: "Notifications", icon: "fas fa-bell" }
   ];
 
   // Get tab from URL if present
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const tabParam = queryParams.get("tab");
+  const tabParam = queryParams.get('tab');
 
   useEffect(() => {
     // Set active tab based on URL parameter if it exists
     if (tabParam) {
-      if (tabParam === "settings") setActiveTab("settings");
-      else if (tabParam === "gaming") setActiveTab("gaming");
-      else if (tabParam === "privacy") setActiveTab("privacy");
-      else if (tabParam === "notifications") setActiveTab("notifications");
-      else setActiveTab("profile");
+      if (tabParam === 'settings') setActiveTab('settings');
+      else if (tabParam === 'gaming') setActiveTab('gaming');
+      else if (tabParam === 'privacy') setActiveTab('privacy');
+      else if (tabParam === 'notifications') setActiveTab('notifications');
+      else setActiveTab('profile');
     }
   }, [tabParam]);
 
@@ -231,6 +231,7 @@ export default function Profile() {
                 {tab.label}
               </button>
             ))}
+            </div>
           </div>
 
           {/* Content Area */}
@@ -254,22 +255,18 @@ export default function Profile() {
                 <h2 className="text-xl font-semibold text-white mb-4">
                   Account Settings
                 </h2>
-
+                
                 <div className="space-y-4">
                   {/* Account Security */}
                   <div className="bg-gray-800 rounded-lg p-4">
-                    <h3 className="text-lg font-medium text-white mb-3">
-                      Account Security
-                    </h3>
-
+                    <h3 className="text-lg font-medium text-white mb-3">Account Security</h3>
+                    
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-gray-300 mb-2">
-                          Email Address
-                        </label>
+                        <label className="block text-gray-300 mb-2">Email Address</label>
                         <div className="flex items-center">
-                          <input
-                            type="email"
+                          <input 
+                            type="email" 
                             value={currentUser?.email || ""}
                             disabled
                             className="flex-1 bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500"
@@ -282,11 +279,9 @@ export default function Profile() {
                           </button>
                         </div>
                       </div>
-
+                      
                       <div>
-                        <label className="block text-gray-300 mb-2">
-                          Password
-                        </label>
+                        <label className="block text-gray-300 mb-2">Password</label>
                         <button
                           type="button"
                           className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
@@ -294,16 +289,12 @@ export default function Profile() {
                           Change Password
                         </button>
                       </div>
-
+                      
                       <div className="pt-2">
                         <div className="flex items-center justify-between">
                           <div>
-                            <h4 className="font-medium text-white">
-                              Two-Factor Authentication
-                            </h4>
-                            <p className="text-sm text-gray-400">
-                              Add an extra layer of security to your account
-                            </p>
+                            <h4 className="font-medium text-white">Two-Factor Authentication</h4>
+                            <p className="text-sm text-gray-400">Add an extra layer of security to your account</p>
                           </div>
                           <button
                             type="button"
@@ -315,18 +306,14 @@ export default function Profile() {
                       </div>
                     </div>
                   </div>
-
+                  
                   {/* Account Preferences */}
                   <div className="bg-gray-800 rounded-lg p-4">
-                    <h3 className="text-lg font-medium text-white mb-3">
-                      Account Preferences
-                    </h3>
-
+                    <h3 className="text-lg font-medium text-white mb-3">Account Preferences</h3>
+                    
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-gray-300 mb-2">
-                          Language
-                        </label>
+                        <label className="block text-gray-300 mb-2">Language</label>
                         <select className="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500">
                           <option value="en">English</option>
                           <option value="es">Spanish</option>
@@ -335,21 +322,17 @@ export default function Profile() {
                           <option value="ja">Japanese</option>
                         </select>
                       </div>
-
+                      
                       <div>
-                        <label className="block text-gray-300 mb-2">
-                          Time Zone
-                        </label>
+                        <label className="block text-gray-300 mb-2">Time Zone</label>
                         <select className="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500">
                           <option value="utc">UTC</option>
                           <option value="est">Eastern Time (ET)</option>
-                          <option value="cet">
-                            Central European Time (CET)
-                          </option>
+                          <option value="cet">Central European Time (CET)</option>
                           <option value="pst">Pacific Time (PT)</option>
                         </select>
                       </div>
-
+                      
                       <div className="flex items-center">
                         <input
                           type="checkbox"
@@ -367,13 +350,11 @@ export default function Profile() {
                       </div>
                     </div>
                   </div>
-
+                  
                   {/* Linked Accounts */}
                   <div className="bg-gray-800 rounded-lg p-4">
-                    <h3 className="text-lg font-medium text-white mb-3">
-                      Linked Accounts
-                    </h3>
-
+                    <h3 className="text-lg font-medium text-white mb-3">Linked Accounts</h3>
+                    
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center">
@@ -382,11 +363,9 @@ export default function Profile() {
                           </div>
                           <span className="text-gray-300">Discord</span>
                         </div>
-                        <button className="text-cyan-400 hover:text-cyan-300">
-                          Connect
-                        </button>
+                        <button className="text-cyan-400 hover:text-cyan-300">Connect</button>
                       </div>
-
+                      
                       <div className="flex items-center justify-between">
                         <div className="flex items-center">
                           <div className="w-8 h-8 bg-blue-800 rounded-full flex items-center justify-center mr-3">
@@ -394,11 +373,9 @@ export default function Profile() {
                           </div>
                           <span className="text-gray-300">Steam</span>
                         </div>
-                        <button className="text-cyan-400 hover:text-cyan-300">
-                          Connect
-                        </button>
+                        <button className="text-cyan-400 hover:text-cyan-300">Connect</button>
                       </div>
-
+                      
                       <div className="flex items-center justify-between">
                         <div className="flex items-center">
                           <div className="w-8 h-8 bg-green-700 rounded-full flex items-center justify-center mr-3">
@@ -406,14 +383,12 @@ export default function Profile() {
                           </div>
                           <span className="text-gray-300">Xbox</span>
                         </div>
-                        <button className="text-cyan-400 hover:text-cyan-300">
-                          Connect
-                        </button>
+                        <button className="text-cyan-400 hover:text-cyan-300">Connect</button>
                       </div>
                     </div>
                   </div>
                 </div>
-
+                
                 <div className="pt-4 flex justify-end">
                   <button
                     onClick={handleProfileUpdate}
@@ -425,7 +400,7 @@ export default function Profile() {
                 </div>
               </div>
             )}
-
+            
             {/* Profile Tab */}
             {activeTab === "profile" && (
               <>

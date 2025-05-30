@@ -4,3 +4,32 @@
 @tailwind utilities;
 
 /* Your global styles here */
+
+/* Custom utility classes */
+@layer utilities {
+  /* Hide scrollbar but allow scrolling */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
+  
+  /* Add responsive padding for mobile */
+  .mobile-container {
+    @apply px-4 sm:px-6 md:px-8;
+  }
+}
+
+/* Responsive font sizes */
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 640px) {
+  html {
+    font-size: 16px;
+  }
+}

@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import { useChat } from "../../contexts/ChatContext";
 import { useAuth } from "../../contexts/AuthContext";
 import ChatMessage from "./ChatMessage";
@@ -68,7 +68,9 @@ export default function ChatWindow() {
       <div className="bg-gray-800 border-b border-gray-700 p-4 flex items-center">
         {/* Chat avatar */}
         <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center mr-3">
-          {activeChat.isGroupChat ? (
+          {activeChat.isGameChannel ? (
+            <span className="text-cyan-400 font-medium">#</span>
+          ) : activeChat.isGroupChat ? (
             <span className="text-white font-medium">
               {(activeChat.name || "G").charAt(0).toUpperCase()}
             </span>
@@ -80,14 +82,25 @@ export default function ChatWindow() {
         </div>
 
         {/* Chat info */}
-        <div>
+        <div className="flex-1">
           <h3 className="font-medium text-white">{getChatName()}</h3>
           <div className="text-xs text-gray-400">
-            {activeChat.isGroupChat
-              ? `${activeChat.participants.length} members`
-              : "Direct Message"}
+            {activeChat.isGameChannel ? (
+              `Game forum channel • ${activeChat.participants.length} members`
+            ) : activeChat.isGroupChat ? (
+              `${activeChat.participants.length} members`
+            ) : (
+              "Direct Message"
+            )}
           </div>
         </div>
+        
+        {/* Game channel badge */}
+        {activeChat.isGameChannel && (
+          <div className="bg-cyan-900/30 text-cyan-400 text-xs px-2 py-1 rounded-md border border-cyan-800">
+            Game Channel
+          </div>
+        )}
       </div>
 
       {/* Messages area */}
